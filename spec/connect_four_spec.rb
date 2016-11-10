@@ -69,20 +69,20 @@ describe ConnectFour do
         end
       end
 
-      context "and board is full does not" do
+      context "and board is full" do
         before(:each) do
           def @game.board_full?; true end
         end
 
-        it "print current state of board" do
+        it "does not print current state of board" do
           expect(@game).not_to receive(:print_board)
         end
 
-        it "ask current player for next move" do
+        it "does not ask current player for next move" do
           expect(@game).not_to receive(:next_move)
         end
 
-        it "swap current player" do
+        it "does not swap current player" do
           expect(@game).not_to receive(:switch_players)
         end
 
@@ -97,15 +97,15 @@ describe ConnectFour do
         @game.instance_variable_set(:@winner, player1)
       end
 
-      it "print current state of board" do
+      it "does not print current state of board" do
         expect(@game).not_to receive(:print_board)
       end
 
-      it "ask current player for next move" do
+      it "does not ask current player for next move" do
         expect(@game).not_to receive(:next_move)
       end
 
-      it "swap current player" do
+      it "does not swap current player" do
         expect(@game).not_to receive(:switch_players)
       end
 
