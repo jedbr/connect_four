@@ -1,6 +1,6 @@
 class ConnectFour
   def initialize
-    @board = Array.new(7) { Array.new(6) }
+    @board = Array.new(6) { Array.new(7) }
     @winner = nil
     @current_player = "●"
   end
@@ -23,7 +23,9 @@ class ConnectFour
   end
 
   def print_board
-
+    @board.each do |column|
+      puts column.join("|")
+    end
   end
 
   def next_move

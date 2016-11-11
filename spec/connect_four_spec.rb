@@ -11,13 +11,13 @@ describe ConnectFour do
   let(:player2) { "○" }
 
   context "#initialize" do
-    it "creates board" do
+    it "creates 6 x 7 board" do
       expect(@game.instance_variable_get(:@board)).to be_instance_of(Array)
-      expect(@game.instance_variable_get(:@board)).to have_exactly(7).items
+      expect(@game.instance_variable_get(:@board)).to have_exactly(6).items
       expect(@game.instance_variable_get(:@board)).
         to all(be_instance_of(Array))
       expect(@game.instance_variable_get(:@board)).
-      to all(have_exactly(6).items)
+      to all(have_exactly(7).items)
     end
 
     it "sets no winner" do
@@ -138,6 +138,14 @@ describe ConnectFour do
       it "returns false" do
         expect(@game.board_full?).not_to be
       end
+    end
+  end
+
+  describe "#print_board" do
+    it "prints current state of board" do
+      expect { @game.print_board }.to output.to_stdout
+      expect(@game.instance_variable_get(:@board)).to receive(:each)
+      @game.print_board
     end
   end
 end
