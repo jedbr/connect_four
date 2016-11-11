@@ -148,4 +148,24 @@ describe ConnectFour do
       @game.print_board
     end
   end
+
+  describe "#switch_players" do
+    context "when ● is current_player" do
+      before(:each) { @game.instance_variable_set(:@current_player, "●") }
+
+      it "switches current player to ○" do
+        @game.switch_players
+        expect(@game.instance_variable_get(:@current_player)).to eql("○")
+      end
+    end
+
+    context "when ○ is current_player" do
+      before(:each) { @game.instance_variable_set(:@current_player, "○") }
+
+      it "switches current player to ●" do
+        @game.switch_players
+        expect(@game.instance_variable_get(:@current_player)).to eql("●")
+      end
+    end
+  end
 end

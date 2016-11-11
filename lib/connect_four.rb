@@ -33,7 +33,11 @@ class ConnectFour
   end
 
   def switch_players
-
+    @current_player = if @current_player == "○"
+                        "●"
+                      else
+                        "○"
+                      end
   end
 
   def finish_game
