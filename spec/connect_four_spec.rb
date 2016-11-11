@@ -119,4 +119,25 @@ describe ConnectFour do
       end
     end
   end
+
+
+  describe "#board_full?" do
+    context "when board is full" do
+      before(:each) do
+        @game.instance_variable_set(:@board, Array.new(7) do
+          Array.new(6) { player1 }
+        end)
+      end
+
+      it "returns true" do
+        expect(@game.board_full?).to be
+      end
+    end
+
+    context "when board is not full" do
+      it "returns false" do
+        expect(@game.board_full?).not_to be
+      end
+    end
+  end
 end

@@ -15,7 +15,11 @@ class ConnectFour
   end
 
   def board_full?
-
+    full = true
+    @board.each do |column|
+      full = false unless column.all?
+    end
+    full
   end
 
   def print_board
