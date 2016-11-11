@@ -1,4 +1,6 @@
 require 'connect_four'
+require 'spec_helper'
+
 
 describe ConnectFour do
   before(:each) do
@@ -11,8 +13,11 @@ describe ConnectFour do
   context "#initialize" do
     it "creates board" do
       expect(@game.instance_variable_get(:@board)).to be_instance_of(Array)
+      expect(@game.instance_variable_get(:@board)).to have_exactly(7).items
       expect(@game.instance_variable_get(:@board)).
         to all(be_instance_of(Array))
+      expect(@game.instance_variable_get(:@board)).
+      to all(have_exactly(6).items)
     end
 
     it "sets no winner" do
