@@ -17,7 +17,7 @@ class ConnectFour
   def board_full?
     full = true
     @board.each do |column|
-      full = false unless column.all?
+      return false unless column.all?
     end
     full
   end
@@ -33,14 +33,15 @@ class ConnectFour
   end
 
   def switch_players
-    @current_player = if @current_player == "○"
-                        "●"
-                      else
-                        "○"
-                      end
+    @current_player = @current_player == "○" ? "●" : "○"
   end
 
   def finish_game
-
+    print_board
+    if @winner
+      puts "Congratulations, #{@winner}!"
+    else
+      puts "Draw. Game over"
+    end
   end
 end

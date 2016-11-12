@@ -62,7 +62,7 @@ describe ConnectFour do
         end
 
         it "prints current state of board" do
-          expect(@game).to receive(:print_board)
+          expect(@game).to receive(:print_board).at_least(:once)
         end
 
         it "asks current player for next move" do
@@ -77,10 +77,6 @@ describe ConnectFour do
       context "and board is full" do
         before(:each) do
           def @game.board_full?; true end
-        end
-
-        it "does not print current state of board" do
-          expect(@game).not_to receive(:print_board)
         end
 
         it "does not ask current player for next move" do
@@ -100,10 +96,6 @@ describe ConnectFour do
     context "when there is a winner" do
       before(:each) do
         @game.instance_variable_set(:@winner, player1)
-      end
-
-      it "does not print current state of board" do
-        expect(@game).not_to receive(:print_board)
       end
 
       it "does not ask current player for next move" do
@@ -165,6 +157,41 @@ describe ConnectFour do
       it "switches current player to ●" do
         @game.switch_players
         expect(@game.instance_variable_get(:@current_player)).to eql("●")
+      end
+    end
+  end
+
+
+  describe "#finish_game" do
+    after(:each) { @game.finish_game }
+
+    it "prints final state of board" do
+      expect(@game).to receive(:print_board)
+    end
+
+    context "when there is a winner" do
+
+    end
+
+    context "when there is no winner" do
+      it "prints 'Draw. Game over'" do
+        expect { @game.finish_game }.to output(/Draw. Game over/).to_stdout
+      end
+    end
+
+    context "when there is a winner" do
+      context "when ○ wins" do
+        before(:each) { @game.instance_variable_set(:@winner, "○") }
+        it "prints congratulations for ○" do
+          expect { @game.finish_game }.to output(/○/).to_stdout
+        end
+      end
+
+      context "when ● wins" do
+        before(:each) { @game.instance_variable_set(:@winner, "●") }
+        it "prints congratulations for ●" do
+          expect { @game.finish_game }.to output(/●/).to_stdout
+        end
       end
     end
   end
