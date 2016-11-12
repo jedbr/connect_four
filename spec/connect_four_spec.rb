@@ -169,10 +169,6 @@ describe ConnectFour do
       expect(@game).to receive(:print_board)
     end
 
-    context "when there is a winner" do
-
-    end
-
     context "when there is no winner" do
       it "prints 'Draw. Game over'" do
         expect { @game.finish_game }.to output(/Draw. Game over/).to_stdout
