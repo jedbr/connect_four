@@ -5,24 +5,20 @@ require 'spec_helper'
 describe ConnectFour do
   before do
     @game = ConnectFour.new
-    allow(@game).to receive_message_chain(:gets, :chomp) { rand(7) + 1 }
+    allow(@game).to receive_message_chain(:gets, :chomp, :to_i) { rand(7) + 1 }
   end
 
   let(:player1) { "●" }
   let(:player2) { "○" }
 
   context "#initialize" do
-    it "creates 6 x 7 board" do
+    it "creates 7 x 6 board" do
       expect(@game.instance_variable_get(:@board)).to be_instance_of(Array)
-      expect(@game.instance_variable_get(:@board)).to have_exactly(6).items
+      expect(@game.instance_variable_get(:@board)).to have_exactly(7).items
       expect(@game.instance_variable_get(:@board))
         .to all(be_instance_of(Array))
       expect(@game.instance_variable_get(:@board))
-        .to all(have_exactly(7).items)
-    end
-
-    it "sets no winner" do
-      expect(@game.instance_variable_get(:@winner)).to eq(nil)
+        .to all(have_exactly(6).items)
     end
 
     it "sets current player to '●'" do
@@ -36,11 +32,10 @@ describe ConnectFour do
       class ConnectFour
         def play
           loop do
-            break if @winner || board_full?
+            break if winner? || board_full?
             switch_players
             print_board
             next_move
-            winner_check
           end
           finish_game
         end
@@ -55,12 +50,12 @@ describe ConnectFour do
 
     context "when there is no winner" do
       before do
-        @game.instance_variable_set(:@winner, nil)
+        expect(@game).to receive(:winner?) { false }
       end
 
       context "and board is not full" do
         before do
-          def @game.board_full?; false end
+          expect(@game).to receive(:board_full?) { false }
         end
 
         it "prints current state of board" do
@@ -78,7 +73,7 @@ describe ConnectFour do
 
       context "and board is full" do
         before do
-          def @game.board_full?; true end
+          expect(@game).to receive(:board_full?) { true }
         end
 
         it "does not ask current player for next move" do
@@ -97,7 +92,7 @@ describe ConnectFour do
 
     context "when there is a winner" do
       before do
-        @game.instance_variable_set(:@winner, player1)
+        expect(@game).to receive(:winner?) { true }
       end
 
       it "does not ask current player for next move" do
@@ -110,6 +105,28 @@ describe ConnectFour do
 
       it "ends game" do
         expect(@game).to receive(:finish_game)
+      end
+    end
+  end
+
+
+  describe "#winner?" do
+    context "when someone wins" do
+      before do
+        @board[1][1] = player1
+        @board[2][2] = player1
+        @board[3][3] = player1
+        @board[4][4] = player1
+      end
+
+      it "returns true" do
+        expect(@game.winner?).to eql(true)
+      end
+    end
+
+    context "when noone wins" do
+      it "returns false" do
+        expect(@game.winner?).to eql(false)
       end
     end
   end
@@ -167,6 +184,11 @@ describe ConnectFour do
   describe "#next_move" do
     it "asks player for next move" do
       expect { @game.next_move }.to output.to_stdout
+    end
+
+    it "takes number between 1 - 7 as column index" do
+      expect(@game).to receive_message_chain(:gets, :chomp, :to_i) { rand(7) + 1 }
+      @game.next_move
     end
   end
 
