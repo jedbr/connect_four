@@ -3,8 +3,9 @@ require 'spec_helper'
 
 
 describe ConnectFour do
-  before(:each) do
+  before do
     @game = ConnectFour.new
+    allow(@game).to receive_message_chain(:gets, :chomp) { rand(7) + 1 }
   end
 
   let(:player1) { "●" }
@@ -14,10 +15,10 @@ describe ConnectFour do
     it "creates 6 x 7 board" do
       expect(@game.instance_variable_get(:@board)).to be_instance_of(Array)
       expect(@game.instance_variable_get(:@board)).to have_exactly(6).items
-      expect(@game.instance_variable_get(:@board)).
-        to all(be_instance_of(Array))
-      expect(@game.instance_variable_get(:@board)).
-      to all(have_exactly(7).items)
+      expect(@game.instance_variable_get(:@board))
+        .to all(be_instance_of(Array))
+      expect(@game.instance_variable_get(:@board))
+        .to all(have_exactly(7).items)
     end
 
     it "sets no winner" do
@@ -31,14 +32,15 @@ describe ConnectFour do
 
 
   describe "#play" do
-    before(:each) do
+    before do
       class ConnectFour
         def play
           loop do
             break if @winner || board_full?
+            switch_players
             print_board
             next_move
-            switch_players
+            winner_check
           end
           finish_game
         end
@@ -47,17 +49,17 @@ describe ConnectFour do
       allow(@game).to receive(:loop).and_yield
     end
 
-    after(:each) do
+    after do
         @game.play
     end
 
     context "when there is no winner" do
-      before(:each) do
+      before do
         @game.instance_variable_set(:@winner, nil)
       end
 
       context "and board is not full" do
-        before(:each) do
+        before do
           def @game.board_full?; false end
         end
 
@@ -75,7 +77,7 @@ describe ConnectFour do
       end
 
       context "and board is full" do
-        before(:each) do
+        before do
           def @game.board_full?; true end
         end
 
@@ -94,7 +96,7 @@ describe ConnectFour do
     end
 
     context "when there is a winner" do
-      before(:each) do
+      before do
         @game.instance_variable_set(:@winner, player1)
       end
 
@@ -115,7 +117,7 @@ describe ConnectFour do
 
   describe "#board_full?" do
     context "when board is full" do
-      before(:each) do
+      before do
         @game.instance_variable_set(:@board, Array.new(7) do
           Array.new(6) { player1 }
         end)
@@ -133,17 +135,10 @@ describe ConnectFour do
     end
   end
 
-  describe "#print_board" do
-    it "prints current state of board" do
-      expect { @game.print_board }.to output.to_stdout
-      expect(@game.instance_variable_get(:@board)).to receive(:each)
-      @game.print_board
-    end
-  end
 
   describe "#switch_players" do
     context "when ● is current_player" do
-      before(:each) { @game.instance_variable_set(:@current_player, "●") }
+      before { @game.instance_variable_set(:@current_player, "●") }
 
       it "switches current player to ○" do
         @game.switch_players
@@ -152,7 +147,7 @@ describe ConnectFour do
     end
 
     context "when ○ is current_player" do
-      before(:each) { @game.instance_variable_set(:@current_player, "○") }
+      before { @game.instance_variable_set(:@current_player, "○") }
 
       it "switches current player to ●" do
         @game.switch_players
@@ -162,8 +157,22 @@ describe ConnectFour do
   end
 
 
+  describe "#print_board" do
+    it "prints current state of board" do
+      expect { @game.print_board }.to output.to_stdout
+    end
+  end
+
+
+  describe "#next_move" do
+    it "asks player for next move" do
+      expect { @game.next_move }.to output.to_stdout
+    end
+  end
+
+
   describe "#finish_game" do
-    after(:each) { @game.finish_game }
+    after { @game.finish_game }
 
     it "prints final state of board" do
       expect(@game).to receive(:print_board)
@@ -177,14 +186,14 @@ describe ConnectFour do
 
     context "when there is a winner" do
       context "when ○ wins" do
-        before(:each) { @game.instance_variable_set(:@winner, "○") }
+        before() { @game.instance_variable_set(:@winner, "○") }
         it "prints congratulations for ○" do
           expect { @game.finish_game }.to output(/○/).to_stdout
         end
       end
 
       context "when ● wins" do
-        before(:each) { @game.instance_variable_set(:@winner, "●") }
+        before() { @game.instance_variable_set(:@winner, "●") }
         it "prints congratulations for ●" do
           expect { @game.finish_game }.to output(/●/).to_stdout
         end
