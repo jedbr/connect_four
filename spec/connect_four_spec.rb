@@ -113,20 +113,24 @@ describe ConnectFour do
   describe "#winner?" do
     context "when someone wins" do
       before do
-        @board[1][1] = player1
-        @board[2][2] = player1
-        @board[3][3] = player1
-        @board[4][4] = player1
+        board = Array.new(7) { Array.new(6) }
+        board[1][1] = player1
+        board[2][2] = player1
+        board[3][3] = player1
+        board[4][4] = player1
+        last_move = {column: 2, row: 2}
+        @game.instance_variable_set(:@board, board)
+        @game.instance_variable_set(:@last_move, last_move)
       end
 
       it "returns true" do
-        expect(@game.winner?).to eql(true)
+        expect(@game.winner?).to be
       end
     end
 
     context "when noone wins" do
       it "returns false" do
-        expect(@game.winner?).to eql(false)
+        expect(@game.winner?).not_to be
       end
     end
   end
@@ -202,7 +206,7 @@ describe ConnectFour do
 
     context "when there is no winner" do
       it "prints 'Draw. Game over'" do
-        expect { @game.finish_game }.to output(/Draw. Game over/).to_stdout
+        expect { @game.finish_game }.to output(/Draw/i).to_stdout
       end
     end
 
