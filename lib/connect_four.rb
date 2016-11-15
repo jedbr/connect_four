@@ -112,9 +112,6 @@ class ConnectFour
       if i.nil?
         last_item = i
         streak = 1
-      elsif last_item.nil?
-        last_item = i
-        streak = 1
       elsif i == last_item
         streak += 1
       else
