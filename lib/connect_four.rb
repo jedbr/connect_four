@@ -80,12 +80,33 @@ class ConnectFour
       column += 1
     end
 
-    return false if match.size < 4
+    return false if match.count { |x| x } < 4
     match_check?(match)
   end
 
   def backslash_check?
-    false
+    match = []
+    row = @last_move[:row]
+    column = @last_move[:column]
+
+    while row <= 5 && column >= 0
+      match << @board[column][row]
+      row += 1
+      column -= 1
+    end
+
+    match.reverse!
+    row = @last_move[:row] - 1
+    column = @last_move[:column] + 1
+
+    while row >= 0 && column <= 6
+      match << @board[column][row]
+      row -= 1
+      column += 1
+    end
+
+    return false if match.count { |x| x } < 4
+    match_check?(match)
   end
 
   def match_check?(match)
