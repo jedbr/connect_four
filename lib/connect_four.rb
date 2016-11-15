@@ -33,30 +33,26 @@ class ConnectFour
     column = @last_move[:column]
 
     if row > 2
-      (row - 3..row).each { |r| match << @board[column][r] }
+      (0..row).each do |r|
+        match << @board[column][r]
+      end
     else
-      (row..row + 3).each { |r| match << @board[column][r] }
+      return false
     end
 
-    match.uniq.size == 1
+    match_check?(match)
   end
 
   def horizontal_check?
     match = []
     row = @last_move[:row]
-    column = @last_move[:column]
 
-    if column > 2
-      (column - 3..column).each { |c| match << @board[c][row] }
-      return true if match.uniq.size == 1
+    @board.each do |col|
+      match << col[row]
     end
 
-    if column < 4
-      match = []
-      (column..column + 3).each { |c| match << @board[c][row] }
-    end
-
-    match.uniq.size == 1
+    return false if match.count { |x| x } < 4
+    match_check?(match)
   end
 
   def slash_check?
