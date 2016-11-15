@@ -64,20 +64,50 @@ class ConnectFour
     row = @last_move[:row]
     column = @last_move[:column]
 
-    if column > 2 && row > 2
-      (-3..0).each { |i| match << @board[column + i][row + i] }
-      return true if match.uniq.size == 1
+    while row >= 0 && column >= 0
+      match << @board[column][row]
+      row -= 1
+      column -= 1
     end
 
-    if column < 3 && row < 3
-      match = []
-      (0..3).each { |i| match << @board[column + i][row + i] }
+    match.reverse!
+    row = @last_move[:row] + 1
+    column = @last_move[:column] + 1
+
+    while row <= 5 && column <= 6
+      match << @board[column][row]
+      row += 1
+      column += 1
     end
 
-    match.uniq.size == 1
+    return false if match.size < 4
+    match_check?(match)
   end
 
   def backslash_check?
+    false
+  end
+
+  def match_check?(match)
+    last_item = nil
+    streak = 1
+    match.each do |i|
+      if i.nil?
+        last_item = i
+        streak = 1
+      elsif last_item.nil?
+        last_item = i
+        streak = 1
+      elsif i == last_item
+        streak += 1
+      else
+        last_item = i
+        streak = 1
+      end
+
+      return true if streak == 4
+    end
+
     false
   end
 
